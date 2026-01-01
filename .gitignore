@@ -1,0 +1,259 @@
+# ============================================
+# FLUTTER / DART
+# ============================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+*.dart.js
+*.js_
+*.js.deps
+*.js.map
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# ============================================
+# ANDROID - BUILD & LOCAL CONFIG
+# ============================================
+# Local configuration (CONTAINS YOUR USERNAME/PATHS!)
+android/local.properties
+
+# Gradle build cache
+android/.gradle/
+**/android/**/gradle-wrapper.jar
+.gradle/
+
+# Build outputs
+android/app/debug/
+android/app/profile/
+android/app/release/
+**/android/**/GeneratedPluginRegistrant.java
+
+# Signing keys (NEVER COMMIT THESE!)
+*.keystore
+*.jks
+android/key.properties
+android/app/*.keystore
+android/app/*.jks
+
+# ============================================
+# iOS - BUILD & LOCAL CONFIG
+# ============================================
+ios/.generated/
+ios/Flutter/App.framework/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# CocoaPods
+ios/Pods/
+ios/.symlinks/
+ios/Podfile.lock
+
+# Xcode user-specific data
+ios/**/*.mode1v3
+ios/**/*.mode2v3
+ios/**/*.moved-aside
+ios/**/*.pbxuser
+ios/**/*.perspectivev3
+ios/**/*sync/
+ios/**/.sconsign.dblite
+ios/**/.tags*
+ios/**/DerivedData/
+ios/**/Icon?
+ios/**/Pods/
+ios/**/.symlinks/
+ios/**/profile
+ios/**/xcuserdata/
+ios/**/.generated/
+ios/**/Flutter/App.framework
+ios/**/Flutter/Flutter.framework
+ios/**/Flutter/Flutter.podspec
+ios/Runner.xcworkspace/xcshareddata/
+ios/Runner.xcworkspace/xcuserdata/
+
+# ============================================
+# macOS - BUILD & LOCAL CONFIG
+# ============================================
+macos/Flutter/ephemeral/
+macos/Pods/
+macos/.symlinks/
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# ============================================
+# LINUX
+# ============================================
+linux/flutter/ephemeral/
+
+# ============================================
+# WINDOWS
+# ============================================
+windows/flutter/ephemeral/
+
+# ============================================
+# WEB
+# ============================================
+web/.dart_tool/
+
+# ============================================
+# IDE / EDITOR CONFIGURATIONS
+# ============================================
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code (uncomment if you don't want to share settings)
+.vscode/
+
+# Cursor IDE
+.cursor/
+
+# ============================================
+# OS-GENERATED FILES (CAN CONTAIN METADATA)
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# MISCELLANEOUS / TEMP FILES
+# ============================================
+*.class
+*.log
+*.pyc
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.temp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# Crash logs
+crash_log_*.txt
+*.crash
+
+# documentation
+docsfile/
+
+# Test outputs
+test-results/
+test_driver/
+
+# ============================================
+# SENSITIVE / PERSONAL DATA FILES
+# ============================================
+# Environment files (may contain API keys, secrets)
+.env
+.env.*
+*.env
+
+# Secrets and credentials
+secrets/
+credentials/
+*.pem
+*.p12
+*.cer
+
+# Firebase config files (contain project identifiers)
+# Uncomment if you want to exclude these
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
+# ios/firebase_app_id_file.json
+
+# ============================================
+# FLUTTER LAUNCHER ICONS & SPLASH CACHE
+# ============================================
+.flutter_launcher_icons.yaml.lock
+
+# ============================================
+# PUBSPEC LOCK (OPTIONAL)
+# ============================================
+# Uncomment the line below if you want GitHub Actions 
+# to resolve fresh dependencies (not recommended for reproducibility)
+# pubspec.lock
+
+# ============================================
+# KEYSTORE & BUILD PIPELINE FILES
+# ============================================
+# Generated keystore files (NEVER COMMIT!)
+*.jks
+*.keystore
+*-keystore.jks
+*-release-keystore.jks
+homyens-*.jks
+homyens-*.keystore
+
+# Base64 encoded keystore (for copying to GitHub Secrets)
+*-keystore-base64.txt
+homyens-keystore-base64.txt
+
+# Key properties file (contains passwords)
+android/key.properties
+key.properties
+
+# Build outputs
+build/
+app/build/
+android/app/build/
+*.apk
+*.aab
+
+# Debug symbols (can be large)
+build/debug-info/
+
+# Gradle caches (additional)
+.gradle/
+android/.gradle/
+**/.gradle/
+**/gradle-wrapper.jar

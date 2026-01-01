@@ -1,0 +1,188 @@
+# ============================================================
+# Pond Defender - Android Release Build Workflow
+# ============================================================
+# This workflow builds signed APK and AAB on every push.
+# Secrets are handled securely and never exposed in logs.
+# ============================================================
+
+name: Android Release Build
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:  # Allow manual trigger
+
+env:
+  FLUTTER_VERSION: '3.38.5'
+  JAVA_VERSION: '17'
+
+jobs:
+  build:
+    name: Build Signed APK & AAB
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ========================================
+      # 1. CHECKOUT CODE
+      # ========================================
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ========================================
+      # 2. SETUP JAVA
+      # ========================================
+      - name: Set Up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      # ========================================
+      # 3. SETUP FLUTTER
+      # ========================================
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter Installation
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      # ========================================
+      # 4. INSTALL DEPENDENCIES
+      # ========================================
+      - name: Get Flutter Dependencies
+        run: flutter pub get
+
+      # ========================================
+      # 5. DECODE KEYSTORE (Secure)
+      # ========================================
+      - name: Decode Keystore
+        env:
+          HOMYENS_KEYSTORE_BASE64: ${{ secrets.HOMYENS_KEYSTORE_BASE64 }}
+        run: |
+          # Decode base64 keystore to file
+          echo "$HOMYENS_KEYSTORE_BASE64" | base64 --decode > android/app/release-keystore.jks
+          
+          # Verify keystore was created (without exposing contents)
+          if [ -f "android/app/release-keystore.jks" ]; then
+            echo "✅ Keystore decoded successfully"
+            ls -la android/app/release-keystore.jks
+          else
+            echo "❌ Failed to decode keystore"
+            exit 1
+          fi
+
+      # ========================================
+      # 6. CREATE KEY.PROPERTIES (Secure)
+      # ========================================
+      - name: Create Key Properties
+        env:
+          HOMYENS_STORE_PASSWORD: ${{ secrets.HOMYENS_STORE_PASSWORD }}
+          HOMYENS_KEY_PASSWORD: ${{ secrets.HOMYENS_KEY_PASSWORD }}
+          HOMYENS_KEY_ALIAS: ${{ secrets.HOMYENS_KEY_ALIAS }}
+        run: |
+          # Create key.properties file (values are masked by GitHub)
+          cat > android/key.properties << EOF
+          storePassword=$HOMYENS_STORE_PASSWORD
+          keyPassword=$HOMYENS_KEY_PASSWORD
+          keyAlias=$HOMYENS_KEY_ALIAS
+          storeFile=release-keystore.jks
+          EOF
+          
+          echo "✅ key.properties created successfully"
+
+      # ========================================
+      # 7. BUILD SIGNED APK
+      # ========================================
+      - name: Build Release APK
+        run: |
+          flutter build apk --release --obfuscate --split-debug-info=build/debug-info
+          echo "✅ APK build completed"
+
+      # ========================================
+      # 8. BUILD SIGNED AAB (App Bundle)
+      # ========================================
+      - name: Build Release AAB
+        run: |
+          flutter build appbundle --release --obfuscate --split-debug-info=build/debug-info
+          echo "✅ AAB build completed"
+
+      # ========================================
+      # 9. CLEANUP SENSITIVE FILES
+      # ========================================
+      - name: Cleanup Sensitive Files
+        if: always()
+        run: |
+          # Securely delete keystore and key.properties
+          rm -f android/app/release-keystore.jks
+          rm -f android/key.properties
+          
+          # Verify cleanup
+          if [ ! -f "android/app/release-keystore.jks" ] && [ ! -f "android/key.properties" ]; then
+            echo "✅ Sensitive files cleaned up successfully"
+          else
+            echo "⚠️ Warning: Some sensitive files may still exist"
+          fi
+
+      # ========================================
+      # 10. UPLOAD APK ARTIFACT
+      # ========================================
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pond-defender-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      # ========================================
+      # 11. UPLOAD AAB ARTIFACT
+      # ========================================
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pond-defender-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+          if-no-files-found: error
+
+      # ========================================
+      # 12. UPLOAD DEBUG SYMBOLS (Optional)
+      # ========================================
+      - name: Upload Debug Symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-symbols
+          path: build/debug-info/
+          retention-days: 90
+          if-no-files-found: warn
+
+      # ========================================
+      # 13. BUILD SUMMARY
+      # ========================================
+      - name: Build Summary
+        run: |
+          echo "============================================"
+          echo "🎉 BUILD COMPLETED SUCCESSFULLY!"
+          echo "============================================"
+          echo ""
+          echo "📦 APK Location: build/app/outputs/flutter-apk/app-release.apk"
+          echo "📦 AAB Location: build/app/outputs/bundle/release/app-release.aab"
+          echo ""
+          echo "APK Size: $(du -h build/app/outputs/flutter-apk/app-release.apk | cut -f1)"
+          echo "AAB Size: $(du -h build/app/outputs/bundle/release/app-release.aab | cut -f1)"
+          echo ""
+          echo "Download artifacts from the Actions tab in GitHub."
+          echo "============================================"
