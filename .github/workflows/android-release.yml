@@ -93,13 +93,13 @@ jobs:
           HOMYENS_KEY_PASSWORD: ${{ secrets.HOMYENS_KEY_PASSWORD }}
           HOMYENS_KEY_ALIAS: ${{ secrets.HOMYENS_KEY_ALIAS }}
         run: |
-          # Create key.properties file (values are masked by GitHub)
-          cat > android/key.properties << EOF
-          storePassword=$HOMYENS_STORE_PASSWORD
-          keyPassword=$HOMYENS_KEY_PASSWORD
-          keyAlias=$HOMYENS_KEY_ALIAS
-          storeFile=release-keystore.jks
-          EOF
+          # Create key.properties file at android/app/ (where build.gradle.kts expects it)
+          cat > android/app/key.properties << EOF
+storePassword=$HOMYENS_STORE_PASSWORD
+keyPassword=$HOMYENS_KEY_PASSWORD
+keyAlias=$HOMYENS_KEY_ALIAS
+storeFile=release-keystore.jks
+EOF
           
           echo "✅ key.properties created successfully"
 
@@ -127,10 +127,10 @@ jobs:
         run: |
           # Securely delete keystore and key.properties
           rm -f android/app/release-keystore.jks
-          rm -f android/key.properties
+          rm -f android/app/key.properties
           
           # Verify cleanup
-          if [ ! -f "android/app/release-keystore.jks" ] && [ ! -f "android/key.properties" ]; then
+          if [ ! -f "android/app/release-keystore.jks" ] && [ ! -f "android/app/key.properties" ]; then
             echo "✅ Sensitive files cleaned up successfully"
           else
             echo "⚠️ Warning: Some sensitive files may still exist"
